@@ -1,0 +1,82 @@
+-------------------------------------------------------------------------
+--                    GNU GENERAL PUBLIC LICENSE                       --
+--                       Version 2, June 1991                          --
+--                                                                     --
+-- Copyright (C) Wells Hsu, wellshsu@outlook.com, All rights reserved. --
+-- Everyone is permitted to copy and distribute verbatim copies        --
+-- of this license document, but changing it is not allowed.           --
+--                  SEE LICENSE.md FOR MORE DETAILS.                   --
+-------------------------------------------------------------------------
+-- AUTO GENERATED, DO NOT EDIT --
+if LUAExcel == nil then LUAExcel = {} end
+---@class #CLASS#
+---@field JSON_ASSET string
+---@field ARR #CLASS#[]
+---@field INITED boolean
+---@field OK boolean
+#FIELDS#
+#CLASS# = CLASS {
+    JSON_ASSET = "#ASSET_PATH#"
+}
+LUAExcel.#CLASS# = #CLASS#
+
+function #CLASS#.INIT()
+    if not AssetManager.OK then
+        Helper.LogError("Load {0} err, assetmanager isn't ready now.", #CLASS#.JSON_ASSET)
+    else
+        #CLASS#.INITED = true
+        try {
+            function()
+                local asset = AssetManager.LoadAsset(#CLASS#.JSON_ASSET, typeof(UnityEngine.TextAsset))
+                if asset then
+                    #CLASS#.ARR = NetMgr.DecodeJson(asset.text)
+                    for i = 1, ##CLASS#.ARR do setmetatable(#CLASS#.ARR[i], #CLASS#) end
+                    #CLASS#.OK = true
+                end
+            end, catch {function(e)
+                Helper.LogError("INIT {0} err: {1}", #CLASS#.JSON_ASSET, e)
+            end }
+        }
+    end
+end
+
+--- 根据提供的Key查找对应的数据
+---@return #CLASS#
+---@param keyvalue string 键值
+---@param keyname string 键名，默认为ID
+function #CLASS#.READ(keyvalue, keyname)
+    if keyname == nil then keyname = "ID" end
+    keyname = "_" .. keyname
+    if not #CLASS#.INITED then #CLASS#.INIT() end
+    if not #CLASS#.OK then return nil end
+    for i = 1, ##CLASS#.ARR do
+        local row = #CLASS#.ARR[i]
+        if row[keyname] == keyvalue then
+            return row
+        end
+    end
+    return nil
+end
+
+--- 根据过滤器列举匹配的数据
+---@return #CLASS#[]
+---@param filter function 过滤器
+function #CLASS#.LIST(filter)
+    if not #CLASS#.INITED then #CLASS#.INIT() end
+    if not #CLASS#.OK then return nil end
+    if filter == null then
+        return #CLASS#.ARR
+    else
+        local rets = {}
+        for i = 1, ##CLASS#.ARR do
+            local row = #CLASS#.ARR[i]
+            if filter(row) then
+                table.insert(rets, row)
+            end
+        end
+        return rets
+    end
+end
+
+#PROPERTY#
+#KEYACCESS#

@@ -1,0 +1,150 @@
+//---------------------------------------------------------------------//
+//                    GNU GENERAL PUBLIC LICENSE                       //
+//                       Version 2, June 1991                          //
+//                                                                     //
+// Copyright (C) Wells Hsu, wellshsu@outlook.com, All rights reserved. //
+// Everyone is permitted to copy and distribute verbatim copies        //
+// of this license document, but changing it is not allowed.           //
+//                  SEE LICENSE.md FOR MORE DETAILS.                   //
+//---------------------------------------------------------------------//
+// AUTO GENERATED, DO NOT EDIT //
+using System;
+using System.Collections.Generic;
+using EP.U3D.LIBRARY.ASSET;
+using EP.U3D.LIBRARY.BASE;
+using EP.U3D.RUNTIME.ILR.JSON;
+using JsonData = EP.U3D.LIBRARY.JSON.JsonData;
+using JsonReader = EP.U3D.LIBRARY.JSON.JsonReader;
+
+namespace ILRExcel
+{
+    public class #CLASS# : #BASE_CLASS#
+    {
+#FIELDS#
+        public const string JSON_ASSET = "#ASSET_PATH#";
+        public static JsonData RAW;
+        public static List<#CLASS#> ARR = new List<#CLASS#>();
+        public static bool INITED;
+        public static bool OK;
+        public delegate bool FILTERFUNC(#CLASS# ele);
+        private static void INIT()
+        {
+            if (!AssetManager.OK)
+            {
+                Helper.LogError("Load {0} err, assetmanager isn't ready now.", JSON_ASSET);
+            }
+            else
+            {
+                INITED = true;
+                try
+                {
+                    var asset = AssetManager.LoadAsset(JSON_ASSET, typeof(UnityEngine.TextAsset)) as UnityEngine.TextAsset;
+                    if (asset)
+                    {
+                        JsonReader reader = new JsonReader(asset.text);
+                        RAW = JsonMapper.ToObject(reader);
+                        reader.Close();
+
+                        reader = new JsonReader(asset.text);
+                        ARR = JsonMapper.ToObject<List<#CLASS#>>(reader);
+                        reader.Close();
+                        OK = true;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Helper.LogError("INIT {0} err: {1}", JSON_ASSET, e);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 根据提供的Key查找对应的数据
+        /// </summary>
+        /// <param name="keyvalue">键值</param>
+        /// <param name="keyname">键名，默认为ID</param>
+        /// <returns></returns>
+        public static #CLASS# READ(object keyvalue, string keyname = "ID")
+        {
+            if (!INITED) INIT();
+            if (!OK) return null;
+            int ivalue = -1;
+            long lvalue = -1;
+            string svalue = string.Empty;
+            int j = -1;
+            keyname = $"_{keyname}";
+            for (int i = 0; i < RAW.Count; i++)
+            {
+                var row = RAW[i];
+                if (j == -1)
+                {
+                    foreach (var _key in row.Keys)
+                    {
+                        j++;
+                        if (_key == keyname)
+                        {
+                            // produce boxing and unboxing
+                            var tmp = row[j];
+                            if (tmp.IsString)
+                            {
+                                svalue = keyvalue as string;
+                            }
+                            else if (tmp.IsInt)
+                            {
+                                ivalue = (int)keyvalue;
+                            }
+                            else if (tmp.IsLong)
+                            {
+                                lvalue = (long)keyvalue;
+                            }
+                            break;
+                        }
+                    }
+                }
+                var _value = row[j];
+                if (_value.IsString)
+                {
+                    if (((string)_value) == svalue) return ARR[i];
+                }
+                else if (_value.IsInt)
+                {
+                    if (((int)_value) == ivalue) return ARR[i];
+                }
+                else if (_value.IsLong)
+                {
+                    if (((long)_value) == lvalue) return ARR[i];
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 根据过滤器列举匹配的数据
+        /// </summary>
+        /// <param name="filter">过滤器</param>
+        /// <returns></returns>
+        public static List<#CLASS#> LIST(FILTERFUNC filter = null)
+        {
+            if (!INITED) INIT();
+            if (!OK) return ARR;
+            if (filter == null)
+            {
+                return ARR;
+            }
+            else
+            {
+                List<#CLASS#> rets = new List<#CLASS#>();
+                for (int i = 0; i < ARR.Count; i++)
+                {
+                    var ele = ARR[i];
+                    if (filter(ele))
+                    {
+                        rets.Add(ele);
+                    }
+                }
+                return rets;
+            }
+        }
+#KEYACCESS#
+    }
+}
