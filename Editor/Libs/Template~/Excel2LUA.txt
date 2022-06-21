@@ -8,6 +8,7 @@
 --                  SEE LICENSE.md FOR MORE DETAILS.                   --
 -------------------------------------------------------------------------
 -- AUTO GENERATED, DO NOT EDIT --
+local cjson = require "cjson"
 if LUAExcel == nil then LUAExcel = {} end
 ---@class #CLASS#
 ---@field JSON_ASSET string
@@ -29,7 +30,7 @@ function #CLASS#.INIT()
             function()
                 local asset = AssetManager.LoadAsset(#CLASS#.JSON_ASSET, typeof(UnityEngine.TextAsset))
                 if asset then
-                    #CLASS#.ARR = NetMgr.DecodeJson(asset.text)
+                    #CLASS#.ARR = cjson.decode(asset.text)
                     for i = 1, ##CLASS#.ARR do setmetatable(#CLASS#.ARR[i], #CLASS#) end
                     #CLASS#.OK = true
                 end
