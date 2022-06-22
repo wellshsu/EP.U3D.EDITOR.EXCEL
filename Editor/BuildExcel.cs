@@ -152,9 +152,8 @@ namespace EP.U3D.EDITOR.EXCEL
                     {
                         var row = excel.Sheet.Rows[i];
                         var kvalue = row[0] as string;
-                        var kkvalue = kvalue.Replace("\"", "");
-                        accessstr += $"\t\tprivate static {clazz} _{kkvalue};\n";
-                        accessstr += $"\t\tpublic static {clazz} {kkvalue}() {{ if (_{kkvalue} == null) _{kkvalue} = READ({kvalue}, \"{kfield}\"); return _{kkvalue}; }}\n";
+                        accessstr += $"\t\tprivate static {clazz} _{kvalue};\n";
+                        accessstr += $"\t\tpublic static {clazz} {kvalue}() {{ if (_{kvalue} == null) _{kvalue} = READ(\"{kvalue}\", \"{kfield}\"); return _{kvalue}; }}\n";
                     }
                 }
             }
@@ -211,10 +210,9 @@ namespace EP.U3D.EDITOR.EXCEL
                     {
                         var row = excel.Sheet.Rows[i];
                         var kvalue = row[0] as string;
-                        var kkvalue = kvalue.Replace("\"", "");
-                        accessstr += $"local _{kkvalue}\n";
+                        accessstr += $"local _{kvalue}\n";
                         accessstr += $"---@return {clazz}\n";
-                        accessstr += $"function {clazz}.{kkvalue}() if _{kkvalue} == nil then _{kkvalue} = {clazz}.READ({kvalue}, \"{kfield}\") end return _{kkvalue} end\n";
+                        accessstr += $"function {clazz}.{kvalue}() if _{kvalue} == nil then _{kvalue} = {clazz}.READ(\"{kvalue}\", \"{kfield}\") end return _{kvalue} end\n";
                     }
                 }
             }
@@ -245,7 +243,15 @@ namespace EP.U3D.EDITOR.EXCEL
                 {
                     var field = fields[j] as string;
                     var type = types[j] as string;
-                    var value = type == "bool" ? row[j].ToString().ToLower() : row[j];
+                    var value = row[j];
+                    if (type == "bool")
+                    {
+                        value = row[j].ToString().ToLower();
+                    }
+                    else if (type == "string")
+                    {
+                        value = $"\"{value}\"".Trim();
+                    }
                     fstr += $"\"_{field}\":{value}";
                     if (j < fields.Length - 1) fstr += ",";
                 }
