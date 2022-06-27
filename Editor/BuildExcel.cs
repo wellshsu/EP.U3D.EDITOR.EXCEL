@@ -132,6 +132,7 @@ namespace EP.U3D.EDITOR.EXCEL
             for (var i = 0; i < fields.Length; i++)
             {
                 var field = fields[i] as string;
+                if (string.IsNullOrEmpty(field)) continue;
                 var type = types[i] as string;
                 var comment = comments[i] as string;
                 cfields += $"\t\tprivate {type} _{field};\n";
@@ -193,6 +194,7 @@ namespace EP.U3D.EDITOR.EXCEL
             for (var i = 0; i < fields.Length; i++)
             {
                 var field = fields[i] as string;
+                if (string.IsNullOrEmpty(field)) continue;
                 var type = types[i] as string;
                 var comment = comments[i] as string;
                 cfields += string.IsNullOrEmpty(comment) ? $"---@field _{field} {type}\n" : $"---@field _{field} {type} {comment}\n";
@@ -242,6 +244,7 @@ namespace EP.U3D.EDITOR.EXCEL
                 for (int j = 0; j < fields.Length; j++)
                 {
                     var field = fields[j] as string;
+                    if (string.IsNullOrEmpty(field)) continue;
                     var type = types[j] as string;
                     var value = row[j];
                     if (type == "bool")
