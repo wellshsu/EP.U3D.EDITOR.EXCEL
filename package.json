@@ -2,7 +2,7 @@
   "name": "ep.u3d.editor.excel",
   "displayName": "EP.U3D.EDITOR.EXCEL",
   "description": "Excel editor.",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "unity": "2019.2",
   "unityRelease": "0a12",
   "relatedPackages": {},

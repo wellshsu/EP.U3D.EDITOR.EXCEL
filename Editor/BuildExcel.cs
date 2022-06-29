@@ -258,6 +258,7 @@ namespace EP.U3D.EDITOR.EXCEL
                     fstr += $"\"_{field}\":{value}";
                     if (j < fields.Length - 1) fstr += ",";
                 }
+                if (fstr.EndsWith(",")) fstr = fstr.Substring(0, fstr.Length - 1);
                 fstr += "}";
                 if (i < excel.Sheet.Rows.Count - 1) fstr += ",";
             }
